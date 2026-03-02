@@ -1,0 +1,12 @@
+ultralytics
+torch
+opencv-python
+numpy
+scipy
+streamlit
+pyyaml
+pandas
+tqdm
+matplotlib
+altair
+scikit-learn

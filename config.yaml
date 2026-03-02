@@ -1,0 +1,29 @@
+# Pipeline Configuration
+crop_top_ratio: 0.30        # crop top 30%, analyze bottom 70%
+target_width: 1280
+target_height: 720
+
+# Research-Grade Weights (unit-less scale)
+weights:
+  sdlp: 0.25
+  steering_entropy: 0.25
+  lateral_band_energy: 0.20
+  speed_cv: 0.20
+  jerk_rms: 0.10
+
+# Baseline settings
+min_samples: 30
+homography_recompute_sec: 15
+fusion_alpha: 0.4
+alert_risk_threshold: 0.85
+
+# Perception settings
+yolo_model: yolov8n.pt
+yolo_conf_threshold: 0.25
+tracker_type: bytetrack.yaml
+target_width: 1280
+target_height: 720
+camera_id: CAM_LOCAL_01
+pipeline_log_path: tmp/pipeline.log
+tracks_log_path: tmp/evaluation_tracks.csv
+alert_queue_path: tmp/alerts_queue.json
