@@ -15,10 +15,8 @@ alert_risk_threshold: 0.85
 # Perception settings
 yolo_model: yolov8n.pt
 yolo_conf_threshold: 0.25
+imgsz: 640
 tracker_type: bytetrack.yaml
-target_width: 1280
-target_height: 720
-crop_top_ratio: 0.30
 camera_id: CAM_LOCAL_01
 pipeline_log_path: tmp/pipeline.log
 tracks_log_path: tmp/evaluation_tracks.csv

@@ -7,7 +7,7 @@ class RiskFusionEngine:
     Combines independent feature probabilities into a single risk score
     using Noisy-OR logic and temporal smoothing.
     """
-    def __init__(self, weights: Dict[str, float] = None, alpha=0.4):
+    def __init__(self, weights: Dict[str, float] = None, alpha=0.4, alert_threshold=0.85):
         # Default weights if not provided
         self.weights = weights or {
             'sdlp': 0.25,
@@ -17,6 +17,7 @@ class RiskFusionEngine:
             'jerk_rms': 0.10
         }
         self.alpha = alpha
+        self.alert_threshold = alert_threshold
         
         # State: track_id -> smoothed_risk
         self.history: Dict[int, float] = {}
@@ -45,12 +46,11 @@ class RiskFusionEngine:
         
     def check_alert(self, track_id: int, risk: float, fps: float) -> bool:
         """
-        Alert rule: R_t > 0.85 sustained for >= 1.5 sec.
+        Alert rule: R_t > threshold sustained for >= 1.5 sec.
         """
-        threshold = 0.85
         required_frames = int(1.5 * fps)
         
-        if risk > threshold:
+        if risk > self.alert_threshold:
             self.alert_counts[track_id] = self.alert_counts.get(track_id, 0) + 1
         else:
             self.alert_counts[track_id] = 0

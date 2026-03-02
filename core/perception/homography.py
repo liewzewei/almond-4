@@ -77,17 +77,34 @@ class HomographyEstimator:
         vp = line_intersection(l_avg, r_avg)
         
         # 6. Validation
-        if vp is None or not (0 <= vp[0] <= w and 0 <= vp[1] <= h * 0.5):
+        if vp is None or not (0 <= vp[0] <= w and 0 <= vp[1] <= h * 0.7):
             logging.warning(f"Invalid vanishing point: {vp}")
             return self.homography_matrix
             
-        # 7. Define Road Trapezoid to Rectangle Mapping
-        # Use simple fixed trapezoid relative to vanishing point for MVP
+        # 7. Define Road Trapezoid dynamically
+        # We want to pick points on the lines that form a reasonable trapezoid
+        # Top points should be closer to VP, bottom points closer to bottom frame edge
+        
+        def get_points_on_line(line, y_top, y_bottom):
+            x1, y1, x2, y2 = line
+            if y2 == y1: return (x1, y_top), (x1, y_bottom) # Vertical
+            slope_inv = (x2 - x1) / (y2 - y1)
+            x_top = x1 + (y_top - y1) * slope_inv
+            x_bottom = x1 + (y_bottom - y1) * slope_inv
+            return (int(x_top), int(y_top)), (int(x_bottom), int(y_bottom))
+
+        # Use 10% above vanishing point (or VP itself) and near bottom of frame
+        y_top = max(vp[1] + int(h * 0.1), 0)
+        y_bottom = h - 1
+        
+        l_top, l_bot = get_points_on_line(l_avg, y_top, y_bottom)
+        r_top, r_bot = get_points_on_line(r_avg, y_top, y_bottom)
+        
         src_pts = np.float32([
-            [l_avg[0], l_avg[1]], # Top Left
-            [r_avg[0], r_avg[1]], # Top Right
-            [l_avg[2], l_avg[3]], # Bottom Left
-            [r_avg[2], r_avg[3]]  # Bottom Right
+            l_top, # Top Left
+            r_top, # Top Right
+            l_bot, # Bottom Left
+            r_bot  # Bottom Right
         ])
         
         dst_pts = np.float32([
@@ -102,7 +119,7 @@ class HomographyEstimator:
         # Update state
         self.homography_matrix = new_matrix
         self.last_update_time = timestamp
-        self.confidence_score = 0.8 # Basic fixed confidence for MVP
-        logging.info("Homography updated successfully")
+        self.confidence_score = 0.8
+        logging.info(f"Homography updated dynamically for {w}x{h} frame")
         
         return self.homography_matrix

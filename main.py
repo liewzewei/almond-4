@@ -22,7 +22,7 @@ def setup_logging(log_path):
 
 def run_pipeline(config, video_path, dry_run_frames=None):
     # Initialize components
-    vp = VideoProcessor(video_path, tuple(config['target_size'] if 'target_size' in config else [1280, 720]))
+    vp = VideoProcessor(video_path)
     tracker = Tracker(config['yolo_model'], config['tracker_type'], config['yolo_conf_threshold'])
     
     # Use the new RiskEngine
@@ -32,30 +32,31 @@ def run_pipeline(config, video_path, dry_run_frames=None):
     aw = AlertWriter(config['alert_queue_path'], config['camera_id'])
     
     setup_logging(config['pipeline_log_path'])
-    logging.info(f"Starting research-grade pipeline on {video_path}")
+    logging.info(f"Starting generalized pipeline on {video_path}")
     
     frame_idx = 0
     start_time = time.time()
     tracks_data = []
     
-    pbar = tqdm(total=dry_run_frames if dry_run_frames else vp.total_frames)
+    pbar = tqdm(total=dry_run_frames if (dry_run_frames and vp.total_frames > 0) else (vp.total_frames if vp.total_frames > 0 else None))
     
     try:
         while True:
             if dry_run_frames and frame_idx >= dry_run_frames:
                 break
                 
-            orig_frame, processed_frame = vp.get_frame()
-            if processed_frame is None:
+            raw_frame = vp.get_frame()
+            if raw_frame is None:
                 break
                 
             timestamp = frame_idx / vp.fps
             
             # 1. Track
-            tracks = tracker.track(processed_frame)
+            # imgsz = config.get('imgsz', 640)
+            tracks = tracker.track(raw_frame)
             
-            # 2. Process through RiskEngine (Homography, BEV, Probability, Fusion)
-            results = engine.process_frame(processed_frame, tracks, frame_idx, timestamp)
+            # 2. Process through RiskEngine
+            results = engine.process_frame(raw_frame, tracks, frame_idx, timestamp)
             
             # 3. Handle Alerts and Logging
             for res in results:
@@ -68,7 +69,7 @@ def run_pipeline(config, video_path, dry_run_frames=None):
                 tracks_data.append(feat_log)
                 
                 if res['is_alert']:
-                    aw.write_alert(tid, frame_idx, risk_score, features, res['bbox'], processed_frame)
+                    aw.write_alert(tid, frame_idx, risk_score, features, res['bbox'], raw_frame)
             
             frame_idx += 1
             pbar.update(1)

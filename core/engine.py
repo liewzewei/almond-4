@@ -24,12 +24,20 @@ class RiskEngine:
         self.feature_engine = FeatureEngine(fps=self.fps, window_sec=3.0)
         self.baseline = OnlineRobustBaseline(min_samples=config.get('min_samples', 30))
         self.prob_converter = RiskProbabilityConverter()
-        self.risk_fusion = RiskFusionEngine(weights=config.get('weights'), alpha=config.get('fusion_alpha', 0.4))
+        self.risk_fusion = RiskFusionEngine(
+            weights=config.get('weights'), 
+            alpha=config.get('fusion_alpha', 0.4),
+            alert_threshold=config.get('alert_risk_threshold', 0.85)
+        )
         
         # Latest results state
         self.latest_risks: Dict[int, float] = {}
         self.latest_features: Dict[int, Dict[str, float]] = {}
         self.latest_probs: Dict[int, Dict[str, float]] = {}
+        
+    def update_alert_threshold(self, new_threshold: float):
+        """Allows dynamic updates from UI or external components."""
+        self.risk_fusion.alert_threshold = new_threshold
         
     def process_frame(self, frame, tracks: List[dict], frame_idx: int, timestamp: float) -> List[dict]:
         """

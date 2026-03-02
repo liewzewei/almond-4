@@ -42,7 +42,7 @@ def main():
             
         # Initialize components
         from core.engine import RiskEngine
-        vp = VideoProcessor(video_path, (config['target_width'], config['target_height']))
+        vp = VideoProcessor(video_path)
         tracker = Tracker(config['yolo_model'], config['tracker_type'], config['yolo_conf_threshold'])
         config['fps'] = vp.fps
         engine = RiskEngine(config)
@@ -70,18 +70,18 @@ def main():
         
         try:
             while True:
-                orig_frame, processed_frame = vp.get_frame()
-                if processed_frame is None:
+                raw_frame = vp.get_frame()
+                if raw_frame is None:
                     break
                     
                 timestamp = frame_idx / vp.fps
                 
                 # 1. Pipeline execution
-                tracks = tracker.track(processed_frame)
-                results = engine.process_frame(processed_frame, tracks, frame_idx, timestamp)
+                tracks = tracker.track(raw_frame)
+                results = engine.process_frame(raw_frame, tracks, frame_idx, timestamp)
                 
                 # 2. Visualization
-                annotated = processed_frame.copy()
+                annotated = raw_frame.copy()
                 bev_img = np.zeros((engine.homography_estimator.bev_height, engine.homography_estimator.bev_width, 3), dtype=np.uint8)
                 
                 for res in results:

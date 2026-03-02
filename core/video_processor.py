@@ -3,14 +3,20 @@ import logging
 from typing import Tuple, Any, Optional
 
 class VideoProcessor:
-    def __init__(self, video_path: str, target_size=(1280, 720), crop_top_ratio=0.3):
+    def __init__(self, video_path: str):
         self.video_path = video_path
-        self.target_size = target_size
-        self.crop_top_ratio = crop_top_ratio
         
-        self.cap = cv2.VideoCapture(video_path)
+        # Determine if source is live camera (int) or file (str)
+        try:
+            source = int(video_path)
+            logging.info(f"Using live camera index: {source}")
+        except ValueError:
+            source = video_path
+            logging.info(f"Using video file: {source}")
+            
+        self.cap = cv2.VideoCapture(source)
         if not self.cap.isOpened():
-            raise ValueError(f"Could not open video: {video_path}")
+            raise ValueError(f"Could not open video source: {video_path}")
             
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -19,29 +25,20 @@ class VideoProcessor:
         
         if self.fps <= 0:
             self.fps = 25.0 # Fallback
-            logging.warning("FPS could not be determined from video. defaulting to 25.0")
+            logging.warning("FPS could not be determined from source. defaulting to 25.0")
         
-        self.crop_y0 = int(self.height * self.crop_top_ratio)
-        self.cropped_height = self.height - self.crop_y0
+        # Scale factors are 1.0 because we work on raw pixels
+        self.scale_x = 1.0
+        self.scale_y = 1.0
         
-        # Scale factors to map processed coords back to original if needed
-        self.scale_x = self.target_size[0] / self.width
-        self.scale_y = self.target_size[1] / self.cropped_height
-        
-        logging.info(f"Video initialized: {self.width}x{self.height} @ {self.fps} FPS")
+        logging.info(f"Video Source initialized: {self.width}x{self.height} @ {self.fps} FPS")
 
     def get_frame(self):
         ret, frame = self.cap.read()
         if not ret:
-            return None, None
+            return None
             
-        # Crop bottom 70% (top 30% removed)
-        cropped = frame[self.crop_y0:, :, :]
-        
-        # Resize to target
-        resized = cv2.resize(cropped, self.target_size, interpolation=cv2.INTER_LINEAR)
-        
-        return frame, resized
+        return frame
 
     def release(self):
         self.cap.release()

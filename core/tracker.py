@@ -12,7 +12,7 @@ class Tracker:
         
         logging.info(f"Tracker initialized on {self.device} using {tracker_config}")
 
-    def track(self, frame):
+    def track(self, frame, imgsz=640):
         # Use YOLOv8 built-in track() which handles detection + tracking
         results = self.model.track(
             source=frame,
@@ -21,6 +21,7 @@ class Tracker:
             conf=self.conf_threshold,
             classes=self.target_classes,
             device=self.device,
+            imgsz=imgsz,
             half=(self.device == 'cuda'),
             verbose=False
         )
