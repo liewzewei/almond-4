@@ -18,7 +18,7 @@ class RiskEngine:
         self.fps = config.get('fps', 30.0)
         
         # Modules
-        self.homography_estimator = HomographyEstimator(config.get('homography_recompute_sec', 10))
+        self.homography_estimator = HomographyEstimator(config)
         self.bev_transformer = BEVTransformer()
         self.trajectory_manager = TrajectoryManager(max_points=int(self.fps * 5)) # 5s history
         self.feature_engine = FeatureEngine(fps=self.fps, window_sec=3.0)

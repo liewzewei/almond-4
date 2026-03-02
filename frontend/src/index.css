@@ -1,0 +1,65 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #faf9f8;
+  color: #323130;
+}
+
+#root {
+  height: 100vh;
+}
+
+/* Custom markers for leaflet */
+.radiating-dot {
+  background-color: #c41e3a;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.8);
+  animation: pulse-ring 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+  border: none;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.8);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(196, 30, 58, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(196, 30, 58, 0);
+  }
+}
+
+.sequence-dot {
+  background-color: #c41e3a;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.6);
+  animation: pulse-ring 1.5s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Custom High Class Leaflet Popup */
+.leaflet-popup-content-wrapper {
+  background: rgba(10, 20, 35, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px !important;
+  color: white !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(10px);
+  padding: 0 !important;
+}
+
+.leaflet-popup-tip-container {
+  display: none !important;
+}
+
+.leaflet-popup-content {
+  margin: 15px !important;
+  font-family: 'Inter', 'Segoe UI', sans-serif !important;
+}

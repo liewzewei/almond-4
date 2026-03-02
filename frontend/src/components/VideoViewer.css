@@ -1,0 +1,141 @@
+.demo-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 450px;
+  height: 100vh;
+  background-color: rgba(10, 20, 35, 0.95);
+  backdrop-filter: blur(10px);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+  z-index: 2001;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+}
+
+.demo-panel.open {
+  transform: translateX(0);
+}
+
+.demo-panel-header {
+  padding: 30px 24px 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.demo-panel-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: #f3f2f1;
+}
+
+.demo-panel-content {
+  padding: 0 24px 24px 24px;
+  flex: 1;
+  overflow: hidden; /* Remove all scrollbars */
+  display: flex;
+  flex-direction: column;
+}
+
+.video-container {
+  width: 100%;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  aspect-ratio: 16/9;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 1; /* Allow shrinking if space is tight */
+  min-height: 200px; /* But keep a reasonable minimum */
+}
+
+.video-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.placeholder-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.metrics-container {
+  margin-top: 24px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metrics-container p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.metrics-container span {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.demo-panel-footer {
+  padding: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-dismiss {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(196, 30, 58, 0.8), rgba(160, 24, 48, 0.9));
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  box-shadow: 0 4px 15px rgba(196, 30, 58, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-dismiss::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-20deg);
+  transition: all 0.5s ease;
+}
+
+.btn-dismiss:hover {
+  background: linear-gradient(135deg, rgba(220, 40, 70, 0.9), rgba(180, 30, 55, 1));
+  box-shadow: 0 6px 20px rgba(196, 30, 58, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-dismiss:hover::after {
+  left: 200%;
+}
+
+.btn-dismiss:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(196, 30, 58, 0.3);
+}

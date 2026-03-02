@@ -17,7 +17,8 @@ def setup_logging(log_path):
         handlers=[
             logging.FileHandler(log_path),
             logging.StreamHandler()
-        ]
+        ],
+        force=True
     )
 
 def run_pipeline(config, video_path, dry_run_frames=None):

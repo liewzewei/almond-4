@@ -11,6 +11,8 @@ min_samples: 30
 homography_recompute_sec: 15
 fusion_alpha: 0.4
 alert_risk_threshold: 0.85
+target_width: 1000
+target_height: 1500
 
 # Perception settings
 yolo_model: yolov8n.pt
@@ -21,3 +23,9 @@ camera_id: CAM_LOCAL_01
 pipeline_log_path: tmp/pipeline.log
 tracks_log_path: tmp/evaluation_tracks.csv
 alert_queue_path: tmp/alerts_queue.json
+
+# Homography Robustness
+hough_threshold: 40
+hough_min_line_len: 60
+hough_max_line_gap: 40
+roi_top_perc: 0.4

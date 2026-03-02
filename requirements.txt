@@ -1,3 +1,5 @@
+flask
+werkzeug
 ultralytics
 torch
 opencv-python

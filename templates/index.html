@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Highway Risk Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        .header-panel {
+            background-color: #080808;
+            border-bottom: 2px solid #2d2d2d;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+        .video-container {
+            background-color: #000;
+            border: 2px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            min-height: 480px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-feed {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .stat-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-feed {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .alert-item {
+            border-bottom: 1px solid #2d2d2d;
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        .alert-item:hover {
+            background-color: #262626;
+        }
+        .alert-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-left: 1px solid #333;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; box-shadow: 0 0 10px rgba(220,53,69,0.5); }
+            50% { opacity: 0.6; box-shadow: 0 0 2px rgba(220,53,69,0.1); }
+            100% { opacity: 1; box-shadow: 0 0 10px rgba(220,53,69,0.5); }
+        }
+        .blink {
+            animation: pulse 1s infinite;
+        }
+        
+        .badge-status {
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header area -->
+    <nav class="navbar navbar-dark header-panel py-3">
+        <div class="container-fluid px-4">
+            <span class="navbar-brand mb-0 h4 fw-bold text-uppercase d-flex align-items-center" style="letter-spacing: 1px;">
+                <span class="text-warning me-2" style="font-size: 1.5rem;">⚠</span> 
+                Highway Hazard Dashboard
+            </span>
+            <div class="d-flex align-items-center">
+                <span id="status-badge" class="badge bg-secondary badge-status rounded-pill px-3 py-2 text-uppercase">
+                    <span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true"></span>
+                    Initializing...
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid px-4 py-4">
+        <div class="row g-4">
+            
+            <!-- Left Column: Video Feed -->
+            <div class="col-lg-8">
+                <div class="video-container shadow">
+                    <!-- Placeholder text in case image fails or loads slow -->
+                    <div class="position-absolute text-muted" id="video-placeholder">
+                        <div class="spinner-border text-secondary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <img id="stream" src="/camera/{{ cam_id }}/stream" class="video-feed position-relative" alt="Live Camera Feed" style="z-index: 5;" onload="document.getElementById('video-placeholder').style.display='none'">
+                </div>
+            </div>
+            
+            <!-- Right Column: Stats & Alerts -->
+            <div class="col-lg-4">
+                
+                <!-- Risk Meter -->
+                <div class="stat-card shadow">
+                    <h6 class="text-uppercase text-muted mb-3 fw-bold tracking-wide">System Risk Level</h6>
+                    <div class="d-flex justify-content-between align-items-end mb-2">
+                        <span id="risk-value" class="display-3 fw-bold text-light lh-1">--%</span>
+                        <span class="text-secondary text-uppercase small" style="font-size: 0.75rem;">Threshold: 70%</span>
+                    </div>
+                    <div class="progress mt-3" style="height: 24px; background-color: #2c2c2c; border-radius: 4px;">
+                        <div id="risk-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2 pt-1 small text-muted font-monospace" style="font-size: 0.75rem;">
+                        <span>0%</span>
+                        <span>30%</span>
+                        <span>70%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+                
+                <!-- Alert Feed -->
+                <div class="alert-feed shadow">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="border-color: #2d2d2d !important; background-color: #1f1f1f;">
+                        <h6 class="mb-0 text-uppercase fw-bold" style="font-size: 0.85rem; letter-spacing: 0.5px;">
+                            <span class="text-danger me-2">●</span> Alert Feed
+                        </h6>
+                        <span class="badge bg-dark border border-secondary text-secondary" id="alert-count">0</span>
+                    </div>
+                    <div id="alert-list" class="flex-grow-1 overflow-auto">
+                        <div class="text-muted p-4 text-center font-monospace" style="font-size: 0.85rem;">
+                            Waiting for telemetry...
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript code -->
+    <script>
+        const camId = {{ cam_id }};
+        const statusUrl = '/camera/' + camId + '/status';
+
+        function updateDashboard() {
+            fetch(statusUrl)
+            .then(response => {
+                if (!response.ok) throw new Error("Network response not ok");
+                return response.json();
+            })
+            .then(data => {
+                // 1. Update Risk Score
+                // Multiply by 100 if risk_score is currently natively returning 0.0 - 1.0 (some AI models do), 
+                // but let's assume it returns standard 0-100 float percentage as Streamlit app did or otherwise.
+                // It's safest to parse what we get. If it never exceeds 1 normally, it might be 0-1 range.
+                // Assuming it's already a percentage (0 to 100)
+                let rawRisk = 0;
+                if (data.risk_score !== undefined && data.risk_score !== null) {
+                    rawRisk = parseFloat(data.risk_score);
+                    // Safe guard: if risk score is strictly <= 1 and the logic implies <1.0 values are percentages
+                    // But if it's already a percentage (eg 45%), then rawRisk is 45.
+                    if (rawRisk <= 1.0 && rawRisk > 0 && String(data.risk_score).includes('.')) {
+                         // rawRisk = rawRisk * 100; // uncomment if backend sends 0-1
+                    }
+                }
+
+                const risk = Math.min(Math.max(rawRisk, 0), 100);
+                const progressBar = document.getElementById('risk-bar');
+                progressBar.style.width = risk + '%';
+                progressBar.setAttribute('aria-valuenow', risk);
+                
+                document.getElementById('risk-value').innerText = risk.toFixed(1) + '%';
+                
+                let riskClass = 'bg-success';
+                let isHighRisk = false;
+                
+                if (risk >= 71) {
+                    riskClass = 'bg-danger';
+                    isHighRisk = true;
+                } else if (risk >= 31) {
+                    riskClass = 'bg-warning';
+                }
+                progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated ' + riskClass;
+                
+                // 2. Update Status Badge
+                const badge = document.getElementById('status-badge');
+                if (data.processing === false) {    // Only apply if explicitly false
+                    badge.className = 'badge bg-secondary badge-status rounded-pill px-3 py-2 text-uppercase';
+                    badge.innerHTML = '<span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true"></span> System Warm-up';
+                } else if (isHighRisk) {
+                    badge.className = 'badge bg-danger blink badge-status rounded-pill px-3 py-2 text-uppercase';
+                    badge.innerText = 'HIGH RISK DETECTED';
+                } else {
+                    badge.className = 'badge bg-success badge-status rounded-pill px-3 py-2 text-uppercase';
+                    badge.innerHTML = '<span class="spinner-grow spinner-grow-sm me-1" role="status" style="animation-duration: 2s;" aria-hidden="true"></span> Monitoring';
+                }
+
+                // 3. Update Alerts Count
+                if (data.alert_count !== undefined) {
+                    document.getElementById('alert-count').innerText = data.alert_count;
+                }
+
+                // 4. Update Alerts List
+                const feed = document.getElementById('alert-list');
+                const alerts = data.alerts || [];
+                
+                if (alerts.length === 0) {
+                    feed.innerHTML = '<div class="text-muted p-4 text-center font-monospace" style="font-size: 0.85rem;">No active alerts...</div>';
+                } else {
+                    feed.innerHTML = '';
+                    // Display top newest alerts (reverse the array so newest is at the top)
+                    const recentAlerts = alerts.slice().reverse();
+                    
+                    recentAlerts.forEach(alertData => {
+                        const item = document.createElement('div');
+                        item.className = 'alert-item d-flex align-items-start';
+                        
+                        let msg = '';
+                        let timeStr = new Date().toLocaleTimeString('en-US', { hour12: false });
+
+                        if (typeof alertData === 'object' && alertData !== null) {
+                            // Extract standard properties if they exist
+                            if (alertData.message) msg = alertData.message;
+                            else if (alertData.type) msg = alertData.type + (alertData.details ? \` - \${alertData.details}\` : '');
+                            else msg = JSON.stringify(alertData);
+                            
+                            // Try to extract timestamp
+                            if (alertData.timestamp) {
+                                // Assume it's an epoch or ISO string
+                                const ts = new Date(alertData.timestamp);
+                                if (!isNaN(ts)) {
+                                    timeStr = ts.toLocaleTimeString('en-US', { hour12: false });
+                                }
+                            }
+                        } else {
+                            msg = String(alertData);
+                        }
+
+                        // Determine severity color (defaults to warning yellow, can be adjusted)
+                        let iconColor = 'text-warning';
+                        if (msg.toLowerCase().includes('high') || msg.toLowerCase().includes('critical') || isHighRisk) {
+                            iconColor = 'text-danger';
+                        }
+
+                        item.innerHTML = \`
+                            <span class="\${iconColor} me-2 mt-1" style="font-size: 1.1rem;">⚠</span>
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="text-light fw-bold" style="word-wrap: break-word;">\${msg}</div>
+                                <small class="text-secondary font-monospace" style="font-size: 0.75rem;">\${timeStr}</small>
+                            </div>
+                        \`;
+                        feed.appendChild(item);
+                    });
+                }
+            })
+            .catch(err => {
+                console.error("Error fetching status:", err);
+                const badge = document.getElementById('status-badge');
+                badge.className = 'badge bg-secondary badge-status rounded-pill px-3 py-2 text-uppercase';
+                badge.innerText = 'Connection Lost';
+            });
+        }
+
+        // Run every 800ms
+        setInterval(updateDashboard, 800);
+        
+        // Initial call
+        updateDashboard();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
