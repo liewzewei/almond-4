@@ -1,0 +1,34 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+.env/
+
+# Temporary and Output Files
+tmp/
+*.log
+*.csv
+*.json
+!config.yaml
+!requirements.txt
+
+# Python Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE Settings
+.vscode/
+.idea/
+
+# Data and Models
+data/
+*.mp4
+*.mov
+*.pt
+*.engine
+
+# OS-specific
+.DS_Store
+Thumbs.db
