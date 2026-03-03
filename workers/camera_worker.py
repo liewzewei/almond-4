@@ -3,7 +3,6 @@ import threading
 import time
 import logging
 import os
-import numpy as np
 from core.engine import RiskEngine
 from core.tracker import Tracker
 from core.alert_writer import AlertWriter
