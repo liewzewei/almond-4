@@ -127,20 +127,8 @@ def react_process_video(video_id):
             tracker = Tracker(cfg.get('YOLO_MODEL', 'yolov8n.pt'), cfg.get('TRACKER_TYPE', 'bytetrack.yaml'), cfg.get('CONF_THRESHOLD', 0.25))
             
             # Pack dict for RiskEngine
-            engine_cfg = {
-                'fps': vp.fps,
-                'min_samples': cfg.get('MIN_SAMPLES', 30),
-                'homography_recompute_sec': cfg.get('HOMOGRAPHY_RECOMPUTE_SEC', 10),
-                'fusion_alpha': cfg.get('FUSION_ALPHA', 0.4),
-                'alert_risk_threshold': cfg.get('ALERT_RISK_THRESHOLD', 0.85),
-                'weights': {
-                    'sdlp': 0.25,
-                    'steering_entropy': 0.25,
-                    'lateral_band_energy': 0.20,
-                    'speed_cv': 0.20,
-                    'jerk_rms': 0.10
-                }
-            }
+            engine_cfg = current_app.config_obj.raw_config.copy()
+            engine_cfg['fps'] = vp.fps
             engine = RiskEngine(engine_cfg)
             
             frame_idx = 0
