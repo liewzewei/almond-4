@@ -49,7 +49,27 @@ Alert Trigger
 * **Risk Score:** Evaluates each vehicle’s extracted features against the established baseline to dynamically quantify anomaly levels.
 * **Alert Trigger:** Notifies systems and captures visual alert snapshots when a vehicle's risk diverges from acceptable thresholds.
 
-## 🚀 Usage
+## � Codebase Overview
+
+The project is structured into modular components separating the AI pipeline, backend APIs, and frontend interfaces.
+
+```text
+almond-4/
+├── app.py                  # Flask REST API & Web Dashboard entry point
+├── main.py                 # CLI entry point for processing videos directly
+├── config.yaml             # Core configuration (thresholds, weights, paths)
+├── core/                   # Hazard detection AI pipeline
+│   ├── engine.py           # Core orchestrator (RiskEngine) connecting perception & motion
+│   ├── perception/         # YOLO detection, ByteTrack tracking, homography (BEV)
+│   ├── motion/             # Trajectory management and feature extraction
+│   └── statistics/         # Online robust baseline and risk fusion models
+├── api/                    # Flask routes and state management
+├── app/                    # Streamlit dashboard and visualizers
+├── frontend/               # React-based web dashboard
+└── workers/                # Background async threads for live cameras
+```
+
+## �🚀 Usage
 
 ### Running the System
 
