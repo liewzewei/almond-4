@@ -49,7 +49,15 @@ Alert Trigger
 * **Risk Score:** Evaluates each vehicle’s extracted features against the established baseline to dynamically quantify anomaly levels.
 * **Alert Trigger:** Notifies systems and captures visual alert snapshots when a vehicle's risk diverges from acceptable thresholds.
 
-## � Codebase Overview
+## 🛠️ Tech Stack
+
+* **AI & Computer Vision**: [PyTorch](https://pytorch.org/), [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics), OpenCV, ByteTrack
+* **Data & Statistics**: NumPy, Pandas, SciPy
+* **Backend Framework**: Python 3.11+, Flask, Werkzeug server
+* **Frontend Interfaces**: React (Web Dashboard), Streamlit (Model Debugging)
+
+
+## 📂 Codebase Overview
 
 The project is structured into modular components separating the AI pipeline, backend APIs, and frontend interfaces.
 
@@ -63,13 +71,14 @@ almond-4/
 │   ├── perception/         # YOLO detection, ByteTrack tracking, homography (BEV)
 │   ├── motion/             # Trajectory management and feature extraction
 │   └── statistics/         # Online robust baseline and risk fusion models
-├── api/                    # Flask routes and state management
+├── api/                    # Flask routes, shared utilities, and state management
 ├── app/                    # Streamlit dashboard and visualizers
 ├── frontend/               # React-based web dashboard
-└── workers/                # Background async threads for live cameras
+├── workers/                # Background async threads for live cameras
+└── archive/                # Deprecated or unused legacy scripts
 ```
 
-## �🚀 Usage
+## 🚀 Usage
 
 ### Running the System
 
@@ -127,6 +136,6 @@ pip install -r requirements.txt
 
 Developed and maintained by the **enam-tujuh** team.
 
-## � License
+## 📄 License
 
 This software is provided under standard open-source licensing. Please refer to the repository's included license files for authorized usage boundaries.
