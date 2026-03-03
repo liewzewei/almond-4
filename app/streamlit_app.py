@@ -6,11 +6,7 @@ import streamlit as st
 import cv2
 import yaml
 import numpy as np
-import pandas as pd
 import time
-import os
-import json
-from PIL import Image
 from core.video_processor import VideoProcessor
 from core.tracker import Tracker
 from core.alert_writer import AlertWriter
