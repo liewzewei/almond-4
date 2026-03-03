@@ -9,16 +9,12 @@ from core.tracker import Tracker
 from core.engine import RiskEngine
 from core.alert_writer import AlertWriter
 
+from api.utils import setup_logging as _unified_setup_logging
+import warnings
+
 def setup_logging(log_path):
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s [%(levelname)s] %(message)s',
-        handlers=[
-            logging.FileHandler(log_path),
-            logging.StreamHandler()
-        ],
-        force=True
-    )
+    warnings.warn("setup_logging in main.py is deprecated. Use api.utils.setup_logging instead.", DeprecationWarning, stacklevel=2)
+    _unified_setup_logging(log_path)
 
 def run_pipeline(config, video_path, dry_run_frames=None):
     # Initialize components

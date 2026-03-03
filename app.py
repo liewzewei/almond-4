@@ -5,8 +5,10 @@ from config import config
 from workers.camera_worker import CameraWorker
 from api.routes import api_bp
 
-# Setup logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+from api.utils import setup_logging
+
+# Setup centralized logging
+setup_logging()
 
 def create_app():
     # Serve static files from the React dist directory
