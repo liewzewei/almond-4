@@ -1,0 +1,28 @@
+﻿=== Pytest ===
+.                                                                        [100%]
+1 passed in 0.37s
+=== Mypy ===
+python : C:\Users\liewz\AppData\Local\Programs\Python\Pyt
+hon313\python.exe: No module named mypy
+At line:1 char:196
++ ... =" >> $out; python -m mypy 
+--ignore-missing-imports . >> $out 2>&1; " ...
++                 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\li 
+   ewz\...dule named mypy:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+=== Ruff ===
+=== Black ===
+python : C:\Users\liewz\AppData\Local\Programs\Python\Pyt
+hon313\python.exe: No module named black
+At line:1 char:334
++ ... == Black ===" >> $out; python -m black . --check 
+>> $out 2>&1; Get-Co ...
++                            
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\li 
+   ewz\...ule named black:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
