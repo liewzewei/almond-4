@@ -1,6 +1,5 @@
 import argparse
 import yaml
-import cv2
 import logging
 import time
 import pandas as pd
